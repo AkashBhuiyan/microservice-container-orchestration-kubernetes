@@ -1,0 +1,44 @@
+apiVersion: apps/v1  # Specifies the Kubernetes API version for the Deployment resource.
+kind: Deployment  # Declares that this configuration defines a Deployment.
+metadata:
+  name: configserver-deployment  # The name of the Deployment, used for management.
+  labels:
+    app: configserver  # Labels help in logically grouping and selecting resources.
+
+spec:
+  replicas: 1  # Number of desired pod replicas. In production, consider increasing this for high availability.
+  
+  selector:
+    matchLabels:
+      app: configserver  # Ensures that this Deployment manages pods with the specified label.
+
+  template:  # Defines the pod template for this Deployment.
+    metadata:
+      labels:
+        app: configserver  # Labels applied to the pods created by this template.
+
+    spec:
+      containers:
+      - name: configserver  # Name of the container inside the pod.
+        #image: akash9229/configserver:v1  # Docker image for the container. Ensure the tag `v1` is the correct version. it gets the image from docker hub
+        image: akash9229/configserver:v1  # Docker image for the container. Ensure the tag `v1` is the correct version
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8071  # Exposes port 8071 inside the container, which the application listens on.
+
+---
+apiVersion: v1  # Specifies the Kubernetes API version for Service.
+kind: Service  # Declares that this configuration defines a Service.
+metadata:
+  name: configserver  # The name of the Service.
+
+spec:
+  selector:
+    app: configserver  # Associates this Service with the pods labeled `app: configserver`.
+
+  type: LoadBalancer  # Exposes the service externally. Suitable for cloud-based deployments (AWS, GCP, Azure).
+
+  ports:
+    - protocol: TCP  # Defines the protocol used for communication (default is TCP).
+      port: 8071  # The external port that clients will use to access the service.
+      targetPort: 8071  # Maps the external port to the container’s port (must match `containerPort` in Deployment).
