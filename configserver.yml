@@ -20,9 +20,8 @@ spec:
     spec:
       containers:
       - name: configserver  # Name of the container inside the pod.
-        #image: akash9229/configserver:v1  # Docker image for the container. Ensure the tag `v1` is the correct version. it gets the image from docker hub
-        image: akash9229/configserver:v1  # Docker image for the container. Ensure the tag `v1` is the correct version
-        imagePullPolicy: Never
+        image: akash9229/configserver:v1  # Docker image for the container. Ensure the tag `v1` is the correct version.
+        imagePullPolicy: Never #  it gets the image from local. Without this it will get the image from docker hub
         ports:
         - containerPort: 8071  # Exposes port 8071 inside the container, which the application listens on.
 
