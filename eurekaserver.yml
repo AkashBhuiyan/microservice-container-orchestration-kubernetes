@@ -1,0 +1,60 @@
+# Kubernetes API version for Deployment resources
+apiVersion: apps/v1
+# Defines a Deployment resource
+kind: Deployment
+metadata:
+  # Name of the Deployment (used for identifying this resource)
+  name: eurekaserver-deployment
+  labels:
+    app: eurekaserver  # Label to identify the application
+
+spec:
+  replicas: 1  # Number of pod replicas (1 instance of Eureka Server)
+
+  selector:
+    matchLabels:
+      app: eurekaserver  # Matches pods with the label "app: eurekaserver"
+
+  template:  # Template for creating pods
+    metadata:
+      labels:
+        app: eurekaserver  # Labels assigned to the pods
+
+    spec:
+      containers:
+        - name: eurekaserver  # Name of the container within the pod
+          image: eazybytes/eurekaserver:s12  # Docker image for Eureka Server (ensure this tag exists)
+
+          ports:
+            - containerPort: 8070  # The port inside the container where Eureka runs
+
+          env:
+            - name: SPRING_APPLICATION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: eazybank-configmap  # Refers to a ConfigMap for environment variables (must exist)
+                  key: EUREKA_APPLICATION_NAME  # The key from ConfigMap providing the application name
+
+            - name: SPRING_CONFIG_IMPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: eazybank-configmap  # Refers to a ConfigMap for importing external configs
+                  key: SPRING_CONFIG_IMPORT  # The key defining where to import configurations from
+
+---
+# Service definition to expose Eureka Server
+apiVersion: v1
+kind: Service
+metadata:
+  name: eurekaserver  # Name of the Service
+
+spec:
+  selector:
+    app: eurekaserver  # Links this Service to pods with label "app: eurekaserver"
+
+  type: LoadBalancer  # Exposes the service externally (for local setups, use NodePort instead)
+
+  ports:
+    - protocol: TCP  # Defines the protocol used for communication
+      port: 8070  # External port that clients will connect to
+      targetPort: 8070  # The internal port inside the container
