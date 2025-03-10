@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: eurekaserver  # Name of the container within the pod
-          image: eazybytes/eurekaserver:s12  # Docker image for Eureka Server (ensure this tag exists)
+          image: bytes/eurekaserver:s12  # Docker image for Eureka Server (ensure this tag exists)
 
           ports:
             - containerPort: 8070  # The port inside the container where Eureka runs
@@ -32,13 +32,13 @@ spec:
             - name: SPRING_APPLICATION_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: eazybank-configmap  # Refers to a ConfigMap for environment variables (must exist)
+                  name: bank-configmap  # Refers to a ConfigMap for environment variables (must exist)
                   key: EUREKA_APPLICATION_NAME  # The key from ConfigMap providing the application name
 
             - name: SPRING_CONFIG_IMPORT
               valueFrom:
                 configMapKeyRef:
-                  name: eazybank-configmap  # Refers to a ConfigMap for importing external configs
+                  name: bank-configmap  # Refers to a ConfigMap for importing external configs
                   key: SPRING_CONFIG_IMPORT  # The key defining where to import configurations from
 
 ---

@@ -1,0 +1,62 @@
+# Defines the API version for Kubernetes deployment resources
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounts-deployment  # Name of the deployment
+  labels:
+    app: accounts  # Label to identify the deployment
+spec:
+  replicas: 1  # Defines the number of pod replicas (increase for scalability)
+  selector:
+    matchLabels:
+      app: accounts  # Ensures the pods with this label are managed by this deployment
+  template:
+    metadata:
+      labels:
+        app: accounts  # Labels the pod to match the selector
+    spec:
+      containers:
+        - name: accounts  # Container name
+          image: bytes/accounts:s12  # Docker image used for this container (update as needed)
+          ports:
+            - containerPort: 8080  # Exposes port 8080 inside the container (should match service targetPort)
+
+          env:  # Environment variables are used to configure the Spring Boot application
+            - name: SPRING_APPLICATION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap  # Retrieves the value from a ConfigMap
+                  key: ACCOUNTS_APPLICATION_NAME  # Specifies the key in the ConfigMap
+
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: SPRING_PROFILES_ACTIVE  # Determines the active Spring profile (e.g., dev, prod)
+
+            - name: SPRING_CONFIG_IMPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: SPRING_CONFIG_IMPORT  # Specifies the location of the Spring Cloud Config server
+
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE  # Points to the Eureka Server for service discovery
+
+---
+# Defines the API version for Kubernetes service resources
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounts  # Name of the service
+spec:
+  selector:
+    app: accounts  # Connects the service to the pods labeled 'app: accounts'
+  type: LoadBalancer  # Exposes the service externally (change to NodePort for local use)
+  ports:
+    - protocol: TCP  # Communication protocol
+      port: 8080  # Port exposed externally
+      targetPort: 8080  # Maps to the containerPort inside the pod
