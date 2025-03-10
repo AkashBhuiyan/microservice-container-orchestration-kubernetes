@@ -1,0 +1,61 @@
+# Deployment configuration for Keycloak
+apiVersion: apps/v1  # API version for Deployment resources
+kind: Deployment  # Defines a Deployment resource
+metadata:
+  name: keycloak  # Name of the Deployment
+  labels:
+    app: keycloak  # Label to identify the application
+
+spec:
+  replicas: 1  # Number of pod replicas to run (1 instance)
+  selector:
+    matchLabels:
+      app: keycloak  # Matches pods with the label "app: keycloak"
+
+  template:  # Defines the pod template
+    metadata:
+      labels:
+        app: keycloak  # Labels for the pods, must match selector
+
+    spec:
+      containers:
+        - name: keycloak  # Name of the container
+          image: quay.io/keycloak/keycloak:26.0.7  # Keycloak Docker image
+          
+          args: ["start-dev"]  # Start Keycloak in development mode
+
+          env:  # Environment variables for Keycloak
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                configMapKeyRef: # Uses environment variables from a ConfigMap named bank-configmap
+                  name: bank-configmap  # ConfigMap name (must exist)
+                  key: KEYCLOAK_ADMIN  # Key referencing admin username
+
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap  # ConfigMap name (must exist)
+                  key: KEYCLOAK_ADMIN_PASSWORD  # Key referencing admin password
+
+          ports:
+            - name: http
+              containerPort: 8080  # Keycloak listens on port 8080 inside the container
+---
+# Service configuration to expose Keycloak
+apiVersion: v1  # API version for Service resources
+kind: Service  # Defines a Service resource
+metadata:
+  name: keycloak  # Name of the Service
+  labels:
+    app: keycloak  # Label to identify the service
+
+spec:
+  selector:
+    app: keycloak  # Links this Service to pods with label "app: keycloak"
+
+  type: LoadBalancer  # Exposes the service externally (change to ClusterIP if only needed inside the cluster)
+
+  ports:
+    - name: http
+      port: 7080  # External port that clients will connect to
+      targetPort: 8080  # The port inside the Keycloak container
