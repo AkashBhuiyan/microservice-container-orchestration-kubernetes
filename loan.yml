@@ -1,0 +1,63 @@
+# Specifies the Kubernetes API version for Deployment resources
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loans-deployment  # Defines the name of the deployment
+  labels:
+    app: loans  # Labels used for identifying the deployment
+spec:
+  replicas: 1  # Number of pod replicas (increase for scalability)
+  selector:
+    matchLabels:
+      app: loans  # Ensures that the deployment manages the correct pods
+  template:
+    metadata:
+      labels:
+        app: loans  # Ensures pods match the selector
+    spec:
+      containers:
+        - name: loans  # Name of the container inside the pod
+          image: akash9229/loans:v1  # Specifies the container image to be used (change as needed)
+          imagePullPolicy: Never #  it gets the image from local. Without this it will get the image from docker hub
+          ports:
+            - containerPort: 8090  # Exposes the port inside the container (must match service targetPort)
+          
+          env:  # Environment variables for configuring the application
+            - name: SPRING_APPLICATION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap  # Refers to ConfigMap storing environment variables
+                  key: LOANS_APPLICATION_NAME  # Retrieves the application name from ConfigMap
+
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: SPRING_PROFILES_ACTIVE  # Defines the active Spring profile (e.g., dev, prod)
+
+            - name: SPRING_CONFIG_IMPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: SPRING_CONFIG_IMPORT  # Defines the location of the Spring Cloud Config server
+
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE  # Configures Eureka client for service discovery
+
+---
+# Defines the API version for Kubernetes Service resources
+apiVersion: v1
+kind: Service
+metadata:
+  name: loans  # Name of the service
+spec:
+  selector:
+    app: loans  # Connects the service to the pods labeled 'app: loans'
+  type: LoadBalancer  # Exposes the service externally (change to NodePort for local use)
+  ports:
+    - protocol: TCP  # Specifies TCP as the communication protocol
+      port: 8090  # External port exposed for accessing the service
+      targetPort: 8090  # Maps to the container's internal port

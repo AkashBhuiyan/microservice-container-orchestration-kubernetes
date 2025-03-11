@@ -1,0 +1,63 @@
+# Defines the API version for the Deployment resource
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cards-deployment  # Name of the deployment
+  labels:
+    app: cards  # Label to identify the deployment
+spec:
+  replicas: 1  # Number of pod replicas (increase for scalability and availability)
+  selector:
+    matchLabels:
+      app: cards  # Ensures the deployment manages the correct pods
+  template:
+    metadata:
+      labels:
+        app: cards  # Labels must match selector labels for proper pod management
+    spec:
+      containers:
+        - name: cards  # Name of the container running in the pod
+          image: akash9229/cards:v1  # Docker image for the cards microservice
+          imagePullPolicy: Never  # Uses the locally built image instead of pulling from Docker Hub
+          ports:
+            - containerPort: 9000  # The container listens on port 9000
+
+          env:  # Environment variables for configuring the application
+            - name: SPRING_APPLICATION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap  # Fetches value from ConfigMap
+                  key: CARDS_APPLICATION_NAME  # Application name from ConfigMap
+
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: SPRING_PROFILES_ACTIVE  # Defines the active Spring profile (e.g., dev, prod)
+
+            - name: SPRING_CONFIG_IMPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: SPRING_CONFIG_IMPORT  # Location of the Spring Cloud Config server
+
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE  # Eureka service discovery URL
+
+---
+# Defines the API version for Kubernetes Service resources
+apiVersion: v1
+kind: Service
+metadata:
+  name: cards  # Name of the service
+spec:
+  selector:
+    app: cards  # Matches with the deployment labels to route traffic to the correct pods
+  type: LoadBalancer  # Exposes the service externally (use NodePort for local development)
+  ports:
+    - protocol: TCP  # Defines TCP as the communication protocol
+      port: 9000  # External port exposed by the service
+      targetPort: 9000  # Maps to the container's internal port

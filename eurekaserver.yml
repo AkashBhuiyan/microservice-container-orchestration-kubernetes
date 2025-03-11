@@ -23,8 +23,8 @@ spec:
     spec:
       containers:
         - name: eurekaserver  # Name of the container within the pod
-          image: bytes/eurekaserver:s12  # Docker image for Eureka Server (ensure this tag exists)
-
+          image: bytes/eurekaserver:v1  # Docker image for Eureka Server (ensure this tag exists)
+          imagePullPolicy: Never #  it gets the image from local. Without this it will get the image from docker hub
           ports:
             - containerPort: 8070  # The port inside the container where Eureka runs
 
