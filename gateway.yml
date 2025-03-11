@@ -1,0 +1,69 @@
+# Defines the Kubernetes API version for the Deployment resource
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gatewayserver-deployment  # Name of the deployment
+  labels:
+    app: gatewayserver  # Labels help in identifying the deployment
+spec:
+  replicas: 1  # Number of pod replicas (increase for scalability)
+  selector:
+    matchLabels:
+      app: gatewayserver  # Ensures the deployment manages the correct pods
+  template:
+    metadata:
+      labels:
+        app: gatewayserver  # Ensures pods match the selector
+    spec:
+      containers:
+        - name: gatewayserver  # Name of the container inside the pod
+          image: akash9229/gatewayserver:v1  # Image to be used (change as needed)
+          imagePullPolicy: Never  # Prevents pulling from Docker Hub; uses the locally built image
+          ports:
+            - containerPort: 8072  # Port exposed inside the container
+
+          env:  # Environment variables for configuring the application
+            - name: SPRING_APPLICATION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap  # Refers to ConfigMap storing environment variables
+                  key: GATEWAY_APPLICATION_NAME  # Retrieves the application name from ConfigMap
+
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: SPRING_PROFILES_ACTIVE  # Defines the active Spring profile (e.g., dev, prod)
+
+            - name: SPRING_CONFIG_IMPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: SPRING_CONFIG_IMPORT  # Defines the location of the Spring Cloud Config server
+
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE  # Configures Eureka client for service discovery
+
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI
+              valueFrom:
+                configMapKeyRef:
+                  name: bank-configmap
+                  key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI  # JWT authentication key
+
+---
+# Defines the API version for Kubernetes Service resources
+apiVersion: v1
+kind: Service
+metadata:
+  name: gatewayserver  # Name of the service
+spec:
+  selector:
+    app: gatewayserver  # Connects the service to the pods labeled 'app: gatewayserver'
+  type: LoadBalancer  # Exposes the service externally (change to NodePort for local use)
+  ports:
+    - protocol: TCP  # Specifies TCP as the communication protocol
+      port: 8072  # External port exposed for accessing the service
+      targetPort: 8072  # Maps to the container's internal port

@@ -17,7 +17,8 @@ spec:
     spec:
       containers:
         - name: accounts  # Container name
-          image: bytes/accounts:s12  # Docker image used for this container (update as needed)
+          image: akash9229/accounts:v1  # Docker image used for this container (update as needed)
+          imagePullPolicy: Never #  it gets the image from local. Without this it will get the image from docker hub
           ports:
             - containerPort: 8080  # Exposes port 8080 inside the container (should match service targetPort)
 
