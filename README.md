@@ -40,16 +40,23 @@ kubectl -n kubernetes-dashboard create token admin-user
 kubectl get secret admin-user -n kubernetes-dashboard -o jsonpath="{.data.token}" | base64 -d
 ```
 
-## Bearer Token:
-
-
 ## Kubernetes Commands
 ```sh
 kubectl get deployments
+```
+```sh
 kubectl get services
+```
+```sh
 kubectl get replicaset
+```
+```sh
 kubectl get pods
+```
+```sh
 kubectl describe pod <pod-name>
+```
+```sh
 kubectl logs <pod-name>
 ```
 
@@ -76,11 +83,23 @@ To deploy microservices and applications in a Kubernetes cluster, the appropriat
 ### Deployment Commands
 ```sh
 kubectl apply -f keycloak.yml
+```
+```sh
 kubectl apply -f configserver.yml
+```
+```sh
 kubectl apply -f eurekaserver.yml
+```
+```sh
 kubectl apply -f accounts.yml
+```
+```sh
 kubectl apply -f loan.yml
+```
+```sh
 kubectl apply -f cards.yml
+```
+```sh
 kubectl apply -f gateway.yml
 ```
 
