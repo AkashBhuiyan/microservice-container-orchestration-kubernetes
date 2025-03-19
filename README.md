@@ -59,6 +59,14 @@ kubectl describe pod <pod-name>
 ```sh
 kubectl logs <pod-name>
 ```
+```sh
+kubectl get pods -o wide
+```
+
+## Create Docker Images from the Git Project
+
+Follow the steps mentioned in this link repository to create Docker images for the this Kubernetes project from the Git repository: [microservice-architecture-java](https://github.com/AkashBhuiyan/microservice-architecture-java).
+
 
 ## Create Environment Variable in Kubernetes Cluster
 ```sh
@@ -72,10 +80,13 @@ To ensure services are deployed in a structured manner, the following order shou
 2. **ConfigMaps** - Configuration for environment variables and other settings.
 3. **ConfigServer** - Centralized configuration management service.
 4. **EurekaServer** - Service registry for microservices.
-5. **Accounts** - Microservice handling account-related operations.
-6. **Loan** - Microservice managing loan-related functionalities.
-7. **Cards** - Microservice handling card-related processes.
-8. **Gateway** - API Gateway for routing requests to services.
+5. **accountsdb** - database for microservices.
+6. **cardsdb** - database for microservices.
+7. **loandb** - database for microservices.
+8. **Accounts** - Microservice handling account-related operations.
+9. **Loan** - Microservice managing loan-related functionalities.
+10. **Cards** - Microservice handling card-related processes.
+11. **Gateway** - API Gateway for routing requests to services.
 
 ## Deploying Applications in Kubernetes
 To deploy microservices and applications in a Kubernetes cluster, the appropriate YAML manifest files should be created and applied. Each microservice and configuration must be properly defined before deployment.
@@ -89,6 +100,9 @@ kubectl apply -f configserver.yml
 ```
 ```sh
 kubectl apply -f eurekaserver.yml
+```
+```sh
+kubectl apply -f accountsdb.yml
 ```
 ```sh
 kubectl apply -f cardsdb.yml
