@@ -1,0 +1,63 @@
+# Defines a PersistentVolumeClaim (PVC) for MySQL storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-cardsdb-pvc  # Name of the PersistentVolumeClaim
+spec:
+  accessModes:
+    - ReadWriteOnce  # The volume can be mounted as read-write by a single node
+  resources:
+    requests:
+      storage: 1Gi  # Requests 1GiB of storage
+
+---
+
+# Defines a Kubernetes Service to expose the MySQL database
+apiVersion: v1
+kind: Service
+metadata:
+  name: cardsdb-service  # Name of the service
+spec:
+  selector:
+    app: cardsdb  # Selects pods with the label 'app: cardsdb'
+  ports:
+    - protocol: TCP  # Uses TCP protocol
+      port: 3308  # Exposes service on port 3308
+      targetPort: 3308  # Forwards traffic to port 3308 of the pod
+  type: ClusterIP  # Service is only accessible within the cluster
+
+---
+
+# Defines a Deployment for the MySQL database
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cardsdb-deployment  # Name of the Deployment
+spec:
+  replicas: 1  # Deploys a single instance of MySQL
+  selector:
+    matchLabels:
+      app: cardsdb  # Selects pods with the label 'app: cardsdb'
+  template:
+    metadata:
+      labels:
+        app: cardsdb  # Labels the pod as 'app: cardsdb'
+    spec:
+      containers:
+        - name: mysql  # Name of the MySQL container
+          image: mysql:latest  # Uses the latest MySQL image
+          args: ["--port=3308"]  # Instructs MySQL to listen on port 3308
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root"  # Sets the MySQL root password
+            - name: MYSQL_DATABASE
+              value: "cardsdb"  # Creates a database named 'cardsdb'
+          ports:
+            - containerPort: 3308  # Exposes port 3308 inside the container
+          volumeMounts:
+            - mountPath: "/var/lib/mysql"  # Mounts storage at MySQL data directory
+              name: mysql-storage  # References the volume named 'mysql-storage'
+      volumes:
+        - name: mysql-storage  # Defines the volume
+          persistentVolumeClaim:
+            claimName: mysql-cardsdb-pvc  # Uses the PVC defined earlier

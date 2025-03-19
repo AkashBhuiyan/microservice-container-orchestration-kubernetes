@@ -91,6 +91,12 @@ kubectl apply -f configserver.yml
 kubectl apply -f eurekaserver.yml
 ```
 ```sh
+kubectl apply -f cardsdb.yml
+```
+```sh
+kubectl apply -f loandb.yml
+```
+```sh
 kubectl apply -f accounts.yml
 ```
 ```sh
