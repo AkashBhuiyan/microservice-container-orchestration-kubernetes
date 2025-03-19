@@ -1,5 +1,12 @@
 # Kubernetes Dashboard
 
+This image shows the Kubernetes Dashboard with deployed microservices.
+
+![Kubernetes Dashboard](K8s-dashboard.png)
+
+
+# Kubernetes Dashboard Documentation
+
 [K8s Dashboard Documentation](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/)
 
 ## Helm Installation
