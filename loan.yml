@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: loans  # Name of the container inside the pod
-          image: akash9229/loans:v1  # Specifies the container image to be used (change as needed)
+          image: akash9229/loan:v1  # Specifies the container image to be used (change as needed)
           imagePullPolicy: Never #  it gets the image from local. Without this it will get the image from docker hub
           ports:
             - containerPort: 8090  # Exposes the port inside the container (must match service targetPort)
@@ -46,6 +46,8 @@ spec:
                 configMapKeyRef:
                   name: bank-configmap
                   key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE  # Configures Eureka client for service discovery
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://loandb-service:3307/loandb"
 
 ---
 # Defines the API version for Kubernetes Service resources
