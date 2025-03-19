@@ -46,6 +46,8 @@ spec:
                 configMapKeyRef:
                   name: bank-configmap
                   key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE  # Eureka service discovery URL
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://cardsdb-service:3308/cardsdb"
 
 ---
 # Defines the API version for Kubernetes Service resources

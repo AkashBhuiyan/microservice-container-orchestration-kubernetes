@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-loandb-pvc  # Name of the PersistentVolumeClaim
+  name: mysql-cardsdb-pvc  # Name of the PersistentVolumeClaim
 spec:
   accessModes:
     - ReadWriteOnce  # The volume can be mounted as read-write by a single node
@@ -16,14 +16,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: loandb-service  # Name of the service
+  name: cardsdb-service  # Name of the service
 spec:
   selector:
-    app: loandb  # Selects pods with the label 'app: loandb'
+    app: cardsdb  # Selects pods with the label 'app: cardsdb'
   ports:
     - protocol: TCP  # Uses TCP protocol
-      port: 3307  # Exposes service on port 3307
-      targetPort: 3307  # Forwards traffic to port 3307 of the pod
+      port: 3308  # Exposes service on port 3308
+      targetPort: 3308  # Forwards traffic to port 3308 of the pod
   type: ClusterIP  # Service is only accessible within the cluster
 
 ---
@@ -32,32 +32,32 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: loandb-deployment  # Name of the Deployment
+  name: cardsdb-deployment  # Name of the Deployment
 spec:
   replicas: 1  # Deploys a single instance of MySQL
   selector:
     matchLabels:
-      app: loandb  # Selects pods with the label 'app: loandb'
+      app: cardsdb  # Selects pods with the label 'app: cardsdb'
   template:
     metadata:
       labels:
-        app: loandb  # Labels the pod as 'app: loandb'
+        app: cardsdb  # Labels the pod as 'app: cardsdb'
     spec:
       containers:
         - name: mysql  # Name of the MySQL container
           image: mysql:latest  # Uses the latest MySQL image
-          args: ["--port=3307"]  # Instructs MySQL to listen on port 3307
+          args: ["--port=3308"]  # Instructs MySQL to listen on port 3308
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "root"  # Sets the MySQL root password
             - name: MYSQL_DATABASE
-              value: "loandb"  # Creates a database named 'loandb'
+              value: "cardsdb"  # Creates a database named 'cardsdb'
           ports:
-            - containerPort: 3307  # Exposes port 3307 inside the container
+            - containerPort: 3308  # Exposes port 3308 inside the container
           volumeMounts:
             - mountPath: "/var/lib/mysql"  # Mounts storage at MySQL data directory
               name: mysql-storage  # References the volume named 'mysql-storage'
       volumes:
         - name: mysql-storage  # Defines the volume
           persistentVolumeClaim:
-            claimName: mysql-loandb-pvc  # Uses the PVC defined earlier
+            claimName: mysql-cardsdb-pvc  # Uses the PVC defined earlier
