@@ -130,3 +130,41 @@ kubectl apply -f cards.yml
 kubectl apply -f gateway.yml
 ```
 
+## Scale Deployments
+
+```sh
+kubectl scale deployment accounts-deployment --replicas=2
+```
+## Retrieves detailed information about the specified Pod and Displays its status, events, conditions, logs, and resource usage.
+
+```sh
+kubectl describe pod <pod-name>
+```
+
+## Updates the container image and Triggers a rolling update
+
+```sh
+kubectl set image deployment/<deployment-name> <container-name>=<new-image-name>:<new-image-tag>
+```
+>> example:
+> ```sh
+> kubectl set image deployment gatewayserver-deployment gatewayserver=akash9229/gatewayserver:v2
+> ```
+
+## Rolling Update
+```sh
+kubectl rollout restart deployment <deployment-name>
+```
+
+## Check if the new image is being used:
+```sh
+kubectl get deployment gatewayserver-deployment -o wide
+```
+
+## Retrieves and displays Kubernetes events in the default namespace, sorted by creation time (oldest first), helping debug issues and track cluster activities and events.
+
+```sh
+kubectl get events -n default --sort-by=.metadata.creationTimestamp
+
+```
+
