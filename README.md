@@ -4,7 +4,6 @@ This image shows the Kubernetes Dashboard with deployed microservices.
 
 ![Kubernetes Dashboard](K8s-dashboard.png)
 
-
 # Kubernetes Dashboard Documentation
 
 [K8s Dashboard Documentation](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/)
@@ -72,8 +71,7 @@ kubectl get pods -o wide
 
 ## Create Docker Images from the Git Project
 
-Follow the steps mentioned in this link repository to create Docker images for the this Kubernetes project from the Git repository: [microservice-architecture-java](https://github.com/AkashBhuiyan/microservice-architecture-java).
-
+Follow the steps mentioned in this link repository to create Docker images for this Kubernetes project from the Git repository: [microservice-architecture-java](https://github.com/AkashBhuiyan/microservice-architecture-java).
 
 ## Create Environment Variable in Kubernetes Cluster
 ```sh
@@ -87,9 +85,9 @@ To ensure services are deployed in a structured manner, the following order shou
 2. **ConfigMaps** - Configuration for environment variables and other settings.
 3. **ConfigServer** - Centralized configuration management service.
 4. **EurekaServer** - Service registry for microservices.
-5. **accountsdb** - database for microservices.
-6. **cardsdb** - database for microservices.
-7. **loandb** - database for microservices.
+5. **accountsdb** - Database for microservices.
+6. **cardsdb** - Database for microservices.
+7. **loandb** - Database for microservices.
 8. **Accounts** - Microservice handling account-related operations.
 9. **Loan** - Microservice managing loan-related functionalities.
 10. **Cards** - Microservice handling card-related processes.
@@ -131,22 +129,20 @@ kubectl apply -f gateway.yml
 ```
 
 ## Scale Deployments
-
 ```sh
 kubectl scale deployment accounts-deployment --replicas=2
 ```
-## Retrieves detailed information about the specified Pod and Displays its status, events, conditions, logs, and resource usage.
 
+## Retrieves detailed information about the specified Pod and Displays its status, events, conditions, logs, and resource usage.
 ```sh
 kubectl describe pod <pod-name>
 ```
 
 ## Updates the container image and Triggers a rolling update
-
 ```sh
 kubectl set image deployment/<deployment-name> <container-name>=<new-image-name>:<new-image-tag>
 ```
->> example:
+> Example:
 > ```sh
 > kubectl set image deployment gatewayserver-deployment gatewayserver=akash9229/gatewayserver:v2
 > ```
@@ -162,9 +158,70 @@ kubectl get deployment gatewayserver-deployment -o wide
 ```
 
 ## Retrieves and displays Kubernetes events in the default namespace, sorted by creation time (oldest first), helping debug issues and track cluster activities and events.
-
 ```sh
 kubectl get events -n default --sort-by=.metadata.creationTimestamp
-
 ```
 
+## Delete a Pod
+```sh
+kubectl delete pod <pod-name>
+```
+
+## Delete a Deployment
+```sh
+kubectl delete deployment <deployment-name>
+```
+
+## Delete a Service
+```sh
+kubectl delete service <service-name>
+```
+
+## View Logs for a Pod Continuously
+```sh
+kubectl logs -f <pod-name>
+```
+
+## View Resource Utilization of Pods
+```sh
+kubectl top pod
+```
+
+## View Resource Utilization of Nodes
+```sh
+kubectl top node
+```
+
+## Check Running Namespaces
+```sh
+kubectl get namespaces
+```
+
+## Get All Resources in a Namespace
+```sh
+kubectl get all -n <namespace>
+```
+
+## Apply All Configurations in a Directory
+```sh
+kubectl apply -f ./k8s/
+```
+
+## Troubleshooting: Debug a Failing Pod
+```sh
+kubectl exec -it <pod-name> -- /bin/sh
+```
+
+## Restart a Pod
+```sh
+kubectl delete pod <pod-name> --grace-period=0 --force
+```
+
+## Check the Current Context
+```sh
+kubectl config current-context
+```
+
+## Switch Kubernetes Contexts
+```sh
+kubectl config use-context <context-name>
