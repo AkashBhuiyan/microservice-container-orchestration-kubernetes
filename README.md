@@ -225,3 +225,34 @@ kubectl config current-context
 ## Switch Kubernetes Contexts
 ```sh
 kubectl config use-context <context-name>
+```
+
+## List Available Kubernetes Contexts
+```sh
+kubectl config get-contexts
+```
+
+## Create a New Kubernetes Context
+```sh
+kubectl config set-context <context-name> --cluster=<cluster-name> --user=<user-name> --namespace=<namespace-name>
+```
+
+## Delete a Kubernetes Context
+```sh
+kubectl config delete-context <context-name>
+```
+
+## Delete All Kubernetes Contexts
+```sh
+kubectl config delete-context <context-name>
+```
+
+## List All Kubernetes Contexts
+```sh
+kubectl config get-contexts
+```
+
+## Create a New Kubernetes Cluster
+```sh
+kubectl config set-cluster <cluster-name> --server=<cluster-server> --certificate-authority=<path-to-ca-cert>
+```
